@@ -116,6 +116,14 @@ async function run() {
             res.send(users);
         })
 
+        // my orders
+        app.get('/myOrders/:email', verifyJWT, async (req, res) => {
+            const query = { email: req.params.email };
+            const cursor = ordersCollection.find(query);
+            const myOrders = await cursor.toArray();
+            res.send(myOrders);
+        })
+
 
     }
     finally {
