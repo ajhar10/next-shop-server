@@ -110,6 +110,12 @@ async function run() {
             }
         })
 
+        // get all users
+        app.get('/user', verifyJWT, async (req, res) => {
+            const users = await userCollection.find().toArray();
+            res.send(users);
+        })
+
 
     }
     finally {
