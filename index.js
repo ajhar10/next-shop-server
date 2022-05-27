@@ -64,6 +64,28 @@ async function run() {
             res.send(result);
         })
 
+        //next
+        //  Add a new Order
+        app.post('/addOrder', async (req, res) => {
+            const newOrder = req.body;
+            const result = await ordersCollection.insertOne(newOrder);
+            res.send(result);
+        })
+
+        // add users
+        app.put('/user/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: user,
+            };
+            const result = await userCollection.updateOne(filter, updateDoc, options);
+            const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
+            res.send({ result, token });
+        })
+
 
     }
     finally {
