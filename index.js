@@ -131,6 +131,17 @@ async function run() {
             res.send(result)
         });
 
+        // add review
+        app.post('/review', async (req, res) => {
+            const result = await reviewsCollection.insertOne(req.body);
+            res.json(result)
+        });
+
+        // get review
+        app.get('/reviews', async (req, res) => {
+            const result = await reviewsCollection.find({}).toArray();
+            res.send(result);
+        });
 
     }
     finally {
