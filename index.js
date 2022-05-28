@@ -89,7 +89,7 @@ async function run() {
         app.get('/admin/:email', async (req, res) => {
             const email = req.params.email;
             const user = await userCollection.findOne({ email: email });
-            const isAdmin = user.role === 'admin';
+            const isAdmin = user?.role === 'admin';
             res.send({ admin: isAdmin })
         })
 
@@ -117,9 +117,10 @@ async function run() {
         })
 
         // my orders
-        app.get('/myOrders/:email', verifyJWT, async (req, res) => {
+        app.get('/myOrders/:email', async (req, res) => {
             const query = { email: req.params.email };
-            const cursor = ordersCollection.find(query);
+
+            const cursor = await ordersCollection.find(query);
             const myOrders = await cursor.toArray();
             res.send(myOrders);
         })
