@@ -117,7 +117,7 @@ async function run() {
         })
 
         // my orders
-        app.get('/myOrders/:email', async (req, res) => {
+        app.get('/myOrders/:email', verifyJWT, async (req, res) => {
             const query = { email: req.params.email };
 
             const cursor = await ordersCollection.find(query);
@@ -125,12 +125,32 @@ async function run() {
             res.send(myOrders);
         })
 
-        // delete my orders
+        // delete orders
         app.delete('/delete/:id', async (req, res) => {
-            const query = { _id: ObjectId(req.params.id) };
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
             const result = await ordersCollection.deleteOne(query);
-            res.send(result)
-        });
+            res.send(result);
+        })
+
+        // get all orders
+        app.get('/allOrders', async (req, res) => {
+            const orders = await ordersCollection.find({}).toArray();
+            res.send(orders)
+        })
+
+        // status update of an order
+        app.put('/statusUpdate/:id', async (req, res) => {
+            const filter = { _id: ObjectId(req.params.id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    status: req.body.status
+                },
+            };
+            const result = await ordersCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        })
 
         // add review
         app.post('/review', async (req, res) => {
